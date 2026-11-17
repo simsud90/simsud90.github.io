@@ -121,9 +121,17 @@ for (const video of videos) {
   art.style.setProperty('--tile', /^#[0-9a-f]{6}$/i.test(video.color || '') ? video.color : '#e7eddc');
   const emoji = document.createElement('span');
   emoji.className = 'video-emoji'; emoji.textContent = video.emoji || '🎬'; emoji.setAttribute('aria-hidden', 'true');
+  const thumbnail = document.createElement('img');
+  thumbnail.className = 'video-thumbnail';
+  thumbnail.alt = '';
+  thumbnail.loading = 'lazy';
+  thumbnail.decoding = 'async';
+  thumbnail.referrerPolicy = 'no-referrer';
+  thumbnail.addEventListener('error', () => { thumbnail.hidden = true; });
+  thumbnail.src = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg';
   const play = document.createElement('span');
   play.className = 'video-play'; play.textContent = '▶'; play.setAttribute('aria-hidden', 'true');
-  art.append(emoji, play);
+  art.append(emoji, thumbnail, play);
   const caption = document.createElement('span');
   caption.className = 'video-caption'; caption.textContent = video.title || 'A little video';
   const subtitle = document.createElement('small'); subtitle.textContent = video.subtitle || 'Tap to watch';

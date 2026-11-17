@@ -4,3 +4,5 @@
 :root .color{width:52px;min-height:52px}
 :root .tool-divider{grid-column:1/-1}
 @media(max-width:540px){:root .toolbox{display:flex;padding:12px;gap:12px;justify-items:normal}:root .colors{display:flex;gap:12px}:root .color{width:48px;min-width:48px;min-height:48px}}
+:root .video-art{aspect-ratio:16/9;overflow:hidden}
+.video-thumbnail{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}

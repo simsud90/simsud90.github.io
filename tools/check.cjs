@@ -59,7 +59,13 @@ for (const url of ['XqZsoesa55w', 'https://youtu.be/XqZsoesa55w?t=4', 'https://w
 for (const url of ['https://youtube.com.evil.test/watch?v=XqZsoesa55w', 'javascript:alert(1)', 'https://example.com/XqZsoesa55w', 'https://youtu.be/short', '', null]) {
   assert.equal(evaluate('youtubeId(' + JSON.stringify(url) + ')'), null);
 }
-assert.equal(elements.get('video-grid').children.length, 6);
+assert.equal(elements.get('video-grid').children.length, 8);
+for (const card of elements.get('video-grid').children) {
+  const thumbnail = card.children[0].children[1];
+  assert.ok(thumbnail.src.startsWith('https://i.ytimg.com/vi/'));
+  thumbnail.listeners.get('error')();
+  assert.equal(thumbnail.hidden, true, 'Unavailable thumbnails must reveal the fallback');
+}
 const canvas = elements.get('canvas');
 function pointer(type, id, x, y) {
   canvas.listeners.get(type)({ pointerId: id, pointerType: 'touch', clientX: x, clientY: y, preventDefault() {} });

@@ -1,12 +1,14 @@
 // Parents: add, remove, or reorder videos here. No other file needs editing.
 // Accepts youtube.com/watch?v=…, youtu.be/…, /shorts/…, or an 11-character video ID.
 // Preview every video yourself: YouTube may show ads, links, and recommendations.
-// These are sample selections; availability and embedding permissions can change.
+// YouTube thumbnails are generated automatically from each URL.
 export const videos = [
-  { title: 'Twinkle, twinkle', subtitle: 'A little song for little stars', url: 'https://www.youtube.com/watch?v=yCjJyiqpAuU', emoji: '🌟', color: '#e9e5f2' },
-  { title: 'Baby shark', subtitle: 'Sing & wiggle along', url: 'https://www.youtube.com/watch?v=XqZsoesa55w', emoji: '🦈', color: '#dfedf0' },
-  { title: 'The wheels on the bus', subtitle: 'Round and round we go', url: 'https://www.youtube.com/watch?v=e_04ZrNroTo', emoji: '🚌', color: '#f4e8c8' },
-  { title: 'Old MacDonald', subtitle: 'Meet our farmyard friends', url: 'https://www.youtube.com/watch?v=_6HzoUcx3eo', emoji: '🐮', color: '#e2ecd9' },
-  { title: 'Five little ducks', subtitle: 'A splashy counting song', url: 'https://www.youtube.com/watch?v=pZw9veQ76fo', emoji: '🐥', color: '#f8e7d5' },
-  { title: 'The alphabet song', subtitle: 'A, B, C, and a little melody', url: 'https://www.youtube.com/watch?v=75p-N9YKqNo', emoji: '🔤', color: '#e6e7f0' },
+  { title: 'Ich bin ein dicker Tanzbär', subtitle: 'Liederkiste', url: 'https://www.youtube.com/watch?v=0CpYjbjBi_8' },
+  { title: 'Häschen in der Grube', subtitle: 'Liederkiste', url: 'https://www.youtube.com/watch?v=8BoaylPmKtA' },
+  { title: 'Bruder Jakob', subtitle: 'Liederkiste', url: 'https://www.youtube.com/watch?v=Frb-w7qyb88' },
+  { title: 'Das Hände-Waschen Lied', subtitle: 'Kinderlieder mit Bobby', url: 'https://www.youtube.com/watch?v=340GxiA_EaI' },
+  { title: 'Hände waschen', subtitle: 'Simone Sommerland · KINDERLIEDER 3D', url: 'https://www.youtube.com/watch?v=4SAir0JusiE' },
+  { title: 'Aramsamsam', subtitle: 'Kinderlieder zum Mitsingen und Bewegen', url: 'https://www.youtube.com/watch?v=gwA9GfYIYus' },
+  { title: 'Old MacDonald Had A Farm', subtitle: 'Super Simple Songs', url: 'https://www.youtube.com/watch?v=_6HzoUcx3eo' },
+  { title: 'Das Krokodil-Lied', subtitle: 'Liederkiste', url: 'https://www.youtube.com/watch?v=rC18LyHbQns' },
 ];
