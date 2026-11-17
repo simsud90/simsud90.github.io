@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fcf7ed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="A little place to watch, draw, and imagine. Made for little fingers.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Little Play • Watch & Draw</title>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Little Play home"><span class="brand-mark">✳</span> little<span>play</span><span class="brand-dot">●</span></a>
+    <div class="header-actions"><span class="made-for">a little space for big imaginations</span><button id="install" hidden>＋ Install</button><button id="fullscreen" class="icon-button" aria-label="Enter full screen">⛶</button></div>
+  </header>
+  <main>
+    <section id="home" class="page home">
+      <div class="hello"><span class="eyebrow">HELLO, LITTLE EXPLORER</span><h1>What shall we<br>do <span>today?</span><svg class="sun" viewBox="0 0 100 100" aria-hidden="true"><g stroke="#e9ac40" stroke-width="5" stroke-linecap="round"><path d="M50 5v10m0 70v10M5 50h10m70 0h10M18 18l8 8m48 48l8 8M18 82l8-8m48-48l8-8"/></g><circle cx="50" cy="50" r="26" fill="#f9ca64"/><circle cx="42" cy="46" r="2.5" fill="#78562f"/><circle cx="58" cy="46" r="2.5" fill="#78562f"/><path d="M42 57q8 9 16 0" fill="none" stroke="#78562f" stroke-width="3" stroke-linecap="round"/></svg></h1><p>A little watching. A little scribbling. A lot of wonder.</p></div>
+      <div class="activity-grid">
+        <a href="#videos" class="activity watch-card"><div class="card-top"><span class="pill">PRESS PLAY</span><span class="spark">✦</span></div><div class="illustration television" aria-hidden="true"><div class="antenna"></div><div class="tv-body"><div class="tv-screen"><span class="hill hill-one"></span><span class="hill hill-two"></span><span class="screen-sun"></span><span class="play-triangle"></span></div><div class="tv-controls"><i></i><i></i><b></b></div></div><div class="tv-feet"></div><span class="floating-star">✧</span></div><div class="card-bottom"><div><h2>Let’s watch</h2><p>Little videos, big smiles</p></div><span class="go" aria-hidden="true">↗</span></div></a>
+        <a href="#draw" class="activity draw-card"><div class="card-top"><span class="pill">MAKE A MASTERPIECE</span><span class="spark">✳</span></div><div class="illustration art" aria-hidden="true"><div class="paper"><svg viewBox="0 0 260 170"><path d="M30 125C20 40 70 25 85 88S122 155 141 82 197 33 217 95" fill="none" stroke="#ee947d" stroke-width="13" stroke-linecap="round"/><path d="M40 140q65-55 165-15" fill="none" stroke="#91b9a1" stroke-width="10" stroke-linecap="round"/><path d="m170 28 5 12 13 1-10 9 3 13-11-7-11 7 3-13-10-9 13-1z" fill="#efbf58"/></svg></div><div class="crayon crayon-one"></div><div class="crayon crayon-two"></div><span class="art-spark">✧</span></div><div class="card-bottom"><div><h2>Let’s draw</h2><p>Every scribble is a little magic</p></div><span class="go" aria-hidden="true">↗</span></div></a>
+      </div>
+      <footer class="home-footer"><span>♡</span> Made for little fingers & curious minds <span class="footer-flower">✿</span></footer>
+    </section>
+    <section id="videos" class="page" hidden><div class="page-heading"><a href="#home" class="back" aria-label="Back to home">⌂ <span>Home</span></a><div><span class="eyebrow">A LITTLE SCREEN TIME</span><h1>Let’s watch<span class="accent">.</span></h1></div></div><p class="page-intro">Pick a picture. Find a little wonder.</p><div id="video-grid" class="video-grid"></div><p id="video-status" class="status" role="status"></p></section>
+    <section id="draw" class="page drawing-page" hidden><div class="drawing-heading"><a href="#home" class="back" aria-label="Back to home">⌂ <span>Home</span></a><h1>Let’s draw<span class="accent">.</span></h1><button id="save" aria-label="Save drawing as a picture">↓ <span>Save picture</span></button></div><div class="drawing-workspace"><div class="toolbox" aria-label="Drawing tools"><div id="colors" class="colors" role="group" aria-label="Colors"></div><div class="tool-divider"></div><button id="brush" class="tool selected" aria-label="Crayon" aria-pressed="true">✎</button><button id="eraser" class="tool" aria-label="Eraser" aria-pressed="false">▱</button><button id="size" class="tool" aria-label="Brush size: medium. Tap to change"><span id="size-dot"></span></button><div class="tool-divider"></div><button id="undo" class="tool" aria-label="Undo last drawing gesture">↶</button><button id="clear" class="tool" aria-label="Clear drawing">♲</button></div><div class="canvas-wrap"><canvas id="canvas" aria-label="Drawing paper. Draw with one or more fingers"></canvas></div></div><p class="drawing-note">One finger, two fingers, all the colors. <span id="drawing-status" role="status"></span></p></section>
+  </main>
+  <dialog id="player"><div class="player-bar"><button id="close-player" aria-label="Close video">← Back</button><span id="player-title"></span><button id="player-fullscreen" aria-label="Make video full screen">⛶</button></div><div id="player-frame"></div></dialog>
+  <dialog id="clear-dialog" class="confirm-dialog"><div class="confirm-symbol">✳</div><h2>A fresh piece of paper?</h2><p>Your drawing will be cleared.</p><div><button id="cancel-clear">Keep drawing</button><button id="confirm-clear">New paper</button></div></dialog>
+  <script type="module" src="app.js"></script>
+</body>
