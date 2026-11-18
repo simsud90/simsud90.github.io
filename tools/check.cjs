@@ -98,45 +98,37 @@ assert.ok(drawingCalls.some(call => call[0] === 'clear'));
 const player = elements.get('player');
 const frame = elements.get('player-frame');
 const click = id => elements.get(id).listeners.get('click')();
-for (const order of [['close-player', 'player-fullscreen'], ['player-fullscreen', 'close-player']]) {
+for (const action of ['back', 'cancel']) {
   elements.get('video-grid').children[0].listeners.get('click')();
   assert.equal(player.open, true);
   assert.equal(sandbox.document.fullscreenElement, player);
   const iframe = frame.children[0];
   assert.ok(iframe.src.startsWith('https://www.youtube-nocookie.com/embed/'));
-  assert.equal(new URL(iframe.src).searchParams.get('fs'), '0');
-  assert.ok(iframe.allow.includes("fullscreen 'none'"));
+  assert.equal(new URL(iframe.src).searchParams.get('fs'), '1');
+  assert.equal(iframe.allowFullscreen, true);
   const before = fullscreenExits;
-  for (const id of order) assert.equal(elements.get(id).attributes['aria-pressed'], 'false');
-  click(order[0]);
-  click(order[0]);
-  let prevented = false;
-  player.listeners.get('cancel')({ preventDefault() { prevented = true; } });
-  assert.ok(prevented, 'Escape must not close the player');
-  assert.equal(player.open, true, 'One distinct button must not close the player');
-  assert.equal(frame.children[0], iframe, 'Playback must continue after the first button');
-  assert.equal(fullscreenExits, before, 'One distinct button must not exit fullscreen');
-  assert.equal(elements.get(order[0]).attributes['aria-pressed'], 'true');
-  click(order[1]);
-  assert.equal(player.open, false, 'Both buttons must close the player in either order');
+  if (action === 'back') click('close-player');
+  else player.listeners.get('cancel')({ preventDefault() {} });
+  assert.equal(player.open, false, `${action} must close the player without confirmation`);
   assert.equal(frame.children.length, 0, 'Closing must remove the playing iframe');
   assert.equal(fullscreenExits, before + 1);
 }
-// A previous session's first click must not count toward the next session.
 elements.get('video-grid').children[0].listeners.get('click')();
-click('close-player');
-evaluate('closePlayer()');
-elements.get('video-grid').children[0].listeners.get('click')();
+const playingFrame = frame.children[0];
 click('player-fullscreen');
-assert.equal(player.open, true, 'Exit progress must reset when the player closes');
+assert.equal(sandbox.document.fullscreenElement, null, 'Square must leave fullscreen immediately');
+assert.equal(player.open, true, 'Fullscreen toggle must not close the video');
+assert.equal(frame.children[0], playingFrame, 'Fullscreen toggle must preserve playback');
+click('player-fullscreen');
+assert.equal(sandbox.document.fullscreenElement, player, 'Square must reenter fullscreen');
+assert.equal(frame.children[0], playingFrame);
 click('close-player');
-// The same two-button exit must work without browser fullscreen support.
 player.requestFullscreen = undefined;
 elements.get('video-grid').children[0].listeners.get('click')();
 click('player-fullscreen');
 assert.equal(player.open, true);
 click('close-player');
-assert.equal(player.open, false);
+assert.equal(player.open, false, 'Back must work without browser fullscreen support');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.webmanifest'), 'utf8'));
 for (const icon of manifest.icons) {
   const bytes = fs.readFileSync(path.join(root, icon.src));
@@ -146,4 +138,4 @@ for (const icon of manifest.icons) {
 const serviceWorker = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 const assetList = vm.runInNewContext(serviceWorker.match(/const ASSETS = (\[[^;]+\]);/)[1]);
 for (const asset of assetList) assert.ok(fs.existsSync(path.join(root, asset)), 'Missing offline asset ' + asset);
-console.log('Passed: JavaScript syntax, video URL validation, independent multitouch strokes, grouped undo, pointer cancellation, clearing, two-button player exit in either order, repeated-click protection, Escape protection, exit reset, fullscreen fallback, player cleanup, manifest icon sizes, and offline asset completeness.');
+console.log('Passed: JavaScript syntax, video URL validation, independent multitouch strokes, grouped undo, pointer cancellation, clearing, single-button player exit, dialog cancellation, fullscreen toggling without interrupting playback, fullscreen fallback, player cleanup, manifest icon sizes, and offline asset completeness.');
