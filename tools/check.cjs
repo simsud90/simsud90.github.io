@@ -36,12 +36,18 @@ function element() {
     hasPointerCapture(id) { return captured.has(id); },
     releasePointerCapture(id) { captured.delete(id); },
     toDataURL() { return 'data:image/png;base64,test'; },
+    requestFullscreen() { sandbox.document.fullscreenElement = this; return Promise.resolve(); },
     showModal() { this.open = true; }, close() { this.open = false; },
   };
 }
 for (const match of html.matchAll(/id="([^"]+)"/g)) elements.set(match[1], element());
+let fullscreenExits = 0;
 const sandbox = {
-  document: { getElementById: id => { assert.ok(elements.has(id), 'Missing HTML id ' + id); return elements.get(id); }, createElement: element, addEventListener() {}, documentElement: element() },
+  document: {
+    getElementById: id => { assert.ok(elements.has(id), 'Missing HTML id ' + id); return elements.get(id); },
+    createElement: element, addEventListener() {}, documentElement: element(),
+    exitFullscreen() { fullscreenExits++; this.fullscreenElement = null; return Promise.resolve(); },
+  },
   window: { addEventListener() {}, scrollTo() {} },
   location: { hash: '#home', protocol: 'http:', hostname: 'localhost' },
   navigator: { onLine: true },
@@ -89,11 +95,48 @@ evaluate('endAllGestures()');
 assert.equal(evaluate('pointers.size'), 0);
 elements.get('confirm-clear').listeners.get('click')();
 assert.ok(drawingCalls.some(call => call[0] === 'clear'));
+const player = elements.get('player');
+const frame = elements.get('player-frame');
+const click = id => elements.get(id).listeners.get('click')();
+for (const order of [['close-player', 'player-fullscreen'], ['player-fullscreen', 'close-player']]) {
+  elements.get('video-grid').children[0].listeners.get('click')();
+  assert.equal(player.open, true);
+  assert.equal(sandbox.document.fullscreenElement, player);
+  const iframe = frame.children[0];
+  assert.ok(iframe.src.startsWith('https://www.youtube-nocookie.com/embed/'));
+  assert.equal(new URL(iframe.src).searchParams.get('fs'), '0');
+  assert.ok(iframe.allow.includes("fullscreen 'none'"));
+  const before = fullscreenExits;
+  for (const id of order) assert.equal(elements.get(id).attributes['aria-pressed'], 'false');
+  click(order[0]);
+  click(order[0]);
+  let prevented = false;
+  player.listeners.get('cancel')({ preventDefault() { prevented = true; } });
+  assert.ok(prevented, 'Escape must not close the player');
+  assert.equal(player.open, true, 'One distinct button must not close the player');
+  assert.equal(frame.children[0], iframe, 'Playback must continue after the first button');
+  assert.equal(fullscreenExits, before, 'One distinct button must not exit fullscreen');
+  assert.equal(elements.get(order[0]).attributes['aria-pressed'], 'true');
+  click(order[1]);
+  assert.equal(player.open, false, 'Both buttons must close the player in either order');
+  assert.equal(frame.children.length, 0, 'Closing must remove the playing iframe');
+  assert.equal(fullscreenExits, before + 1);
+}
+// A previous session's first click must not count toward the next session.
 elements.get('video-grid').children[0].listeners.get('click')();
-assert.equal(elements.get('player').open, true);
-assert.ok(elements.get('player-frame').children[0].src.startsWith('https://www.youtube-nocookie.com/embed/'));
-elements.get('close-player').listeners.get('click')();
-assert.equal(elements.get('player-frame').children.length, 0, 'Closing must remove the playing iframe');
+click('close-player');
+evaluate('closePlayer()');
+elements.get('video-grid').children[0].listeners.get('click')();
+click('player-fullscreen');
+assert.equal(player.open, true, 'Exit progress must reset when the player closes');
+click('close-player');
+// The same two-button exit must work without browser fullscreen support.
+player.requestFullscreen = undefined;
+elements.get('video-grid').children[0].listeners.get('click')();
+click('player-fullscreen');
+assert.equal(player.open, true);
+click('close-player');
+assert.equal(player.open, false);
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.webmanifest'), 'utf8'));
 for (const icon of manifest.icons) {
   const bytes = fs.readFileSync(path.join(root, icon.src));
@@ -103,4 +146,4 @@ for (const icon of manifest.icons) {
 const serviceWorker = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 const assetList = vm.runInNewContext(serviceWorker.match(/const ASSETS = (\[[^;]+\]);/)[1]);
 for (const asset of assetList) assert.ok(fs.existsSync(path.join(root, asset)), 'Missing offline asset ' + asset);
-console.log('Passed: JavaScript syntax, video URL validation, independent multitouch strokes, grouped undo, pointer cancellation, clearing, player cleanup, manifest icon sizes, and offline asset completeness.');
+console.log('Passed: JavaScript syntax, video URL validation, independent multitouch strokes, grouped undo, pointer cancellation, clearing, two-button player exit in either order, repeated-click protection, Escape protection, exit reset, fullscreen fallback, player cleanup, manifest icon sizes, and offline asset completeness.');
