@@ -85,30 +85,45 @@ export function youtubeId(value) {
     return /^[A-Za-z0-9_-]{11}$/.test(id || '') ? id : null;
   } catch { return null; }
 }
-let playerOwnsFullscreen = false;
+const playerExitButtons = ['close-player', 'player-fullscreen'];
+const playerExitClicks = new Set();
+function resetPlayerExit() {
+  playerExitClicks.clear();
+  for (const id of playerExitButtons) $(id).setAttribute('aria-pressed', 'false');
+  $('player-exit-status').textContent = 'To leave the video, tap Back and the square in either order.';
+}
+function confirmPlayerExit(id) {
+  playerExitClicks.add(id);
+  $(id).setAttribute('aria-pressed', 'true');
+  if (playerExitClicks.size === playerExitButtons.length) closePlayer();
+  else $('player-exit-status').textContent = id === 'close-player' ? 'Now tap the square to leave the video.' : 'Now tap Back to leave the video.';
+}
 function openPlayer(video, id) {
   const iframe = document.createElement('iframe');
   iframe.title = video.title;
-  iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-  iframe.allowFullscreen = true;
+  iframe.allow = "autoplay; encrypted-media; fullscreen 'none'; picture-in-picture 'none'";
   iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-  iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0&fs=1`;
+  iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0&fs=0`;
   $('player-title').textContent = video.title;
   $('player-frame').replaceChildren(iframe);
+  resetPlayerExit();
   $('player').showModal();
-  playerOwnsFullscreen = !document.fullscreenElement;
-  if (playerOwnsFullscreen) requestFullscreen($('player'));
+  if (!document.fullscreenElement) requestFullscreen($('player'));
 }
 function closePlayer() {
   $('player-frame').replaceChildren(); // Remove the iframe to stop sound immediately.
   if ($('player').open) $('player').close();
-  if (playerOwnsFullscreen && document.fullscreenElement === $('player')) document.exitFullscreen().catch(() => {});
-  playerOwnsFullscreen = false;
+  resetPlayerExit();
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {
+    $('video-status').textContent = 'Could not leave fullscreen. Use your browser\u2019s fullscreen control.';
+  });
 }
-$('close-player').addEventListener('click', closePlayer);
-$('player').addEventListener('cancel', (event) => { event.preventDefault(); closePlayer(); });
-$('player').addEventListener('close', () => $('player-frame').replaceChildren());
-$('player-fullscreen').addEventListener('click', () => requestFullscreen($('player')));
+for (const id of playerExitButtons) $(id).addEventListener('click', () => confirmPlayerExit(id));
+$('player').addEventListener('cancel', (event) => {
+  event.preventDefault();
+  $('player-exit-status').textContent = 'To leave the video, tap Back and the square in either order.';
+});
+$('player').addEventListener('close', () => { $('player-frame').replaceChildren(); resetPlayerExit(); });
 let invalidVideos = 0;
 for (const video of videos) {
   const id = youtubeId(video.url);

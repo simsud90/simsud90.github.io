@@ -13,7 +13,12 @@ Edit **videos.js**. Each entry has a title, subtitle, and URL. YouTube thumbnail
 
 Thumbnails load from YouTube's image servers as preview cards approach the viewport. The privacy-enhanced YouTube player loads only after a video is selected. Embedding **does not disable advertising**. There is no supported embed parameter that reproduces Brave’s ad blocking. YouTube may show ads, controls, external links, and recommendations; `rel=0` restricts recommendations to the same channel rather than removing them. A browser’s blocking behavior is outside this app’s control. For reliably ad-free video, use appropriately licensed local video files instead.
 
-Videos open in a viewport-filling player and request browser fullscreen on tap. Some browsers, particularly iPad Safari, limit programmatic fullscreen; the player still fills the app and YouTube’s fullscreen control remains available. Autoplay with sound can also require a second tap under browser policy. This app is not a device kiosk or parental-control boundary.
+### Ad blocking
+To block YouTube ads, open this app in Brave and enable Brave Shields for the site, or use a browser with a compatible ad-blocking extension. Blocking depends on the browser and YouTube and is not guaranteed. The app does not bundle an ad blocker or bypass the browser's restrictions; installing the app alone does not add ad blocking.
+
+Videos open in a viewport-filling player and request browser fullscreen on tap. To close the video and leave fullscreen, tap **Back** and the **square** button in either order. The first button stays highlighted while playback continues; tapping it again does not count as the other button. Exit progress resets for each video. Escape does not close the app's player. YouTube's own fullscreen and picture-in-picture permissions are disabled so the app's controls remain available.
+
+Some browsers, particularly iPad Safari, limit programmatic fullscreen; the player still fills the app. Browser/OS fullscreen exits (such as Escape or system gestures) cannot be disabled by a website, and do not close the video. Autoplay with sound can also require a second tap under browser policy. This app is not a device kiosk or parental-control boundary.
 
 ## Drawing
 Each finger or pen gets an independent stroke using Pointer Events and pointer capture. Canvas gestures do not scroll or zoom the page; page-level zoom remains available for accessibility. A gesture with simultaneous fingers is one undo step. Tools include six colors, three sizes, erasing, eight undo steps, confirmed clearing, and PNG export. Rotation retains the picture, adapting it to the new canvas proportions. Export is 2048 × 1536.
